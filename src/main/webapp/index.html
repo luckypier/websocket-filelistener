@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>File listener</title>
+
+        <script type="text/javascript">
+
+            //Create WebSocket parameter
+            var cars = new Array('Saab', 'Volvo', 'BMW',
+            'Honda', 'Chevrolet', 'Ford',
+            'Toyota', 'Mercedes-Benz', 'Ferrari',
+            'Lamborghini');
+            var room = Math.floor((Math.random() * 10) + 1);
+
+            //Connect
+            var targetUrl = window.location.href;
+            targetUrl = targetUrl.replace('http://', 'ws://');
+            targetUrl = targetUrl + 'websocket/' + cars[room];
+            var webSocket = new WebSocket(targetUrl);
+
+            webSocket.onerror = function(event) {
+              onError(event)
+            };
+
+            webSocket.onopen = function(event) {
+              onOpen(event)
+            };
+
+            webSocket.onmessage = function(event) {
+              onMessage(event)
+            };
+
+            function onMessage(event) {
+              document.getElementById('messages').innerHTML
+                += '<br />' + event.data;
+            }
+
+            function onOpen(event) {
+              document.getElementById('messages').innerHTML
+                = 'Connection established';
+            }
+
+            function onError(event) {
+              alert(event.data);
+            }
+
+            function send() {
+              var txt = document.getElementById('inputmessage').value;
+              webSocket.send(txt);
+              return false;
+            }
+
+        </script>
+
+    </head>
+    <body>
+        <div>
+            <input id="inputmessage" type="text"/>
+        </div>
+        <div>
+            <input type="submit" value="Broadcast message" onclick="send()"/>
+        </div>
+        <div id="messages"></div>
+
+    </body>
+</html>
